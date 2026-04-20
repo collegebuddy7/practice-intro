@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>College Buddy – Introduction Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@700;800&display=swap" rel="stylesheet"/>
+<script src="messages.js"></script>
+<style>
+/* ===== VARIABLES ===== */
+:root {
+  --navy:   #1e4d6b;
+  --navy2:  #163a52;
+  --green:  #5aac44;
+  --green2: #3d8a2e;
+  --amber:  #f5a623;
+  --white:  #ffffff;
+  --bg:     #f0f5fa;
+  --card:   #ffffff;
+  --text:   #1a2e3b;
+  --muted:  #6b8499;
+  --border: #d0e2ef;
+  --red:    #e53e3e;
+  --shadow: 0 4px 24px rgba(30,77,107,0.13);
+  --radius: 18px;
+}
+
+/* ===== RESET ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Nunito',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ===== SCREENS ===== */
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;flex-direction:column;}
+
+/* ===== LOGIN SCREEN ===== */
+#loginScreen{
+  background: linear-gradient(160deg, var(--navy) 0%, var(--navy2) 60%, #0e2537 100%);
+  align-items:center;
+  justify-content:center;
+  padding:24px 16px;
+  position:relative;
+  overflow:hidden;
+}
+#loginScreen::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background: radial-gradient(ellipse at 70% 20%, rgba(90,172,68,0.15) 0%, transparent 60%),
+              radial-gradient(ellipse at 20% 80%, rgba(245,166,35,0.08) 0%, transparent 50%);
+  pointer-events:none;
+}
+
+.login-box{
+  background:rgba(255,255,255,0.06);
+  border:1.5px solid rgba(255,255,255,0.13);
+  backdrop-filter:blur(12px);
+  border-radius:28px;
+  padding:36px 28px 32px;
+  width:100%;
+  max-width:440px;
+  position:relative;
+  z-index:1;
+  animation: fadeUp .6s ease both;
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+
+.logo-wrap{text-align:center;margin-bottom:28px;}
+.logo-wrap img{height:70px;object-fit:contain;}
+.login-subtitle{
+  text-align:center;
+  color:rgba(255,255,255,0.65);
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:.5px;
+  margin-top:8px;
+}
+
+.field{margin-bottom:18px;}
+.field label{
+  display:block;
+  color:rgba(255,255,255,0.8);
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:7px;
+  letter-spacing:.4px;
+}
+.field input, .field select{
+  width:100%;
+  background:rgba(255,255,255,0.09);
+  border:1.5px solid rgba(255,255,255,0.2);
+  border-radius:12px;
+  padding:14px 16px;
+  color:#fff;
+  font-family:'Nunito',sans-serif;
+  font-size:16px;
+  font-weight:600;
+  outline:none;
+  transition:.2s;
+}
+.field input::placeholder{color:rgba(255,255,255,0.35);}
+.field input:focus, .field select:focus{
+  border-color:var(--green);
+  background:rgba(255,255,255,0.13);
+  box-shadow:0 0 0 3px rgba(90,172,68,0.2);
+}
+.field select option{background:var(--navy2);color:#fff;}
+
+.btn-login{
+  width:100%;
+  padding:16px;
+  background:linear-gradient(135deg,var(--green),var(--green2));
+  border:none;
+  border-radius:14px;
+  color:#fff;
+  font-family:'Baloo 2',sans-serif;
+  font-size:18px;
+  font-weight:800;
+  cursor:pointer;
+  letter-spacing:.5px;
+  transition:.2s;
+  box-shadow:0 4px 20px rgba(90,172,68,0.4);
+  margin-top:6px;
+}
+.btn-login:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(90,172,68,0.5);}
+.btn-login:active{transform:translateY(0);}
+.btn-login:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+
+/* ===== NAVBAR ===== */
+.navbar{
+  background:var(--navy);
+  padding:0 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  height:62px;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 2px 16px rgba(0,0,0,0.18);
+}
+.navbar img{height:42px;object-fit:contain;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-user{
+  color:rgba(255,255,255,0.85);
+  font-size:13px;
+  font-weight:700;
+  max-width:120px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.btn-logout{
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.2);
+  border-radius:8px;
+  padding:6px 12px;
+  color:#fff;
+  font-size:12px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.2s;
+}
+.btn-logout:hover{background:rgba(255,255,255,0.2);}
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar-wrap{
+  background:var(--navy2);
+  padding:10px 16px 12px;
+}
+.progress-info{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:7px;
+}
+.progress-label{color:rgba(255,255,255,0.75);font-size:12px;font-weight:700;letter-spacing:.4px;}
+.progress-count{color:var(--amber);font-size:13px;font-weight:800;}
+.progress-track{
+  background:rgba(255,255,255,0.1);
+  border-radius:99px;
+  height:8px;
+  overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:linear-gradient(90deg,var(--green),var(--amber));
+  border-radius:99px;
+  transition:width .5s cubic-bezier(.4,0,.2,1);
+  min-width:4px;
+}
+
+/* ===== DASHBOARD ===== */
+#dashScreen{background:var(--bg);}
+.dash-body{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  padding:20px 16px 100px;
+  max-width:700px;
+  margin:0 auto;
+  width:100%;
+}
+
+/* Navigation controls */
+.nav-controls{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:16px;
+}
+.btn-nav{
+  background:var(--navy);
+  border:none;
+  border-radius:12px;
+  padding:12px 22px;
+  color:#fff;
+  font-family:'Nunito',sans-serif;
+  font-size:15px;
+  font-weight:800;
+  cursor:pointer;
+  transition:.2s;
+  display:flex;align-items:center;gap:6px;
+}
+.btn-nav:hover{background:var(--navy2);transform:translateY(-1px);}
+.btn-nav:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+
+.msg-counter{
+  background:white;
+  border:2px solid var(--border);
+  border-radius:12px;
+  padding:10px 18px;
+  text-align:center;
+  min-width:80px;
+}
+.msg-counter-id{font-family:'Baloo 2',sans-serif;font-size:22px;font-weight:800;color:var(--navy);line-height:1;}
+.msg-counter-total{font-size:11px;font-weight:700;color:var(--muted);}
+
+/* ===== MESSAGE CARD ===== */
+.msg-card{
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  border:2px solid var(--border);
+  overflow:hidden;
+  margin-bottom:18px;
+  animation: cardSlide .35s ease both;
+  position:relative;
+}
+@keyframes cardSlide{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+.card-header{
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  padding:14px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.card-id-badge{
+  background:var(--amber);
+  color:#1a1a1a;
+  font-family:'Baloo 2',sans-serif;
+  font-size:14px;
+  font-weight:800;
+  padding:4px 12px;
+  border-radius:99px;
+  white-space:nowrap;
+}
+.card-title{
+  color:rgba(255,255,255,0.9);
+  font-size:14px;
+  font-weight:700;
+  flex:1;
+}
+.card-done-badge{
+  background:var(--green);
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+  padding:4px 10px;
+  border-radius:99px;
+  white-space:nowrap;
+  display:none;
+}
+.card-done-badge.show{display:block;}
+
+/* ===== THE TEXT – BIG & READABLE ===== */
+.card-text{
+  padding:24px 20px;
+  font-size:22px;         /* large font for easy reading */
+  font-weight:700;
+  line-height:1.75;
+  color:var(--text);
+  letter-spacing:.2px;
+}
+@media(max-width:480px){
+  .card-text{font-size:20px;line-height:1.7;padding:20px 16px;}
+}
+
+/* ===== CARD ACTIONS ===== */
+.card-actions{
+  padding:0 18px 18px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.btn-action{
+  display:flex;align-items:center;gap:7px;
+  padding:13px 18px;
+  border:none;
+  border-radius:12px;
+  font-family:'Nunito',sans-serif;
+  font-size:14px;
+  font-weight:800;
+  cursor:pointer;
+  transition:.18s;
+  flex:1;
+  justify-content:center;
+  min-width:100px;
+}
+.btn-read{background:#eef6ff;color:var(--navy);}
+.btn-read:hover{background:#d9ecff;}
+
+.btn-record{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;}
+.btn-record:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(30,77,107,0.35);}
+.btn-record.recording{background:linear-gradient(135deg,var(--red),#c0392b);animation:pulse 1.2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(229,62,62,.5);}50%{box-shadow:0 0 0 8px rgba(229,62,62,0);}}
+
+.btn-dl-single{background:#f0faf0;color:var(--green2);}
+.btn-dl-single:hover{background:#ddf4dd;}
+.btn-dl-single:disabled{opacity:.35;cursor:not-allowed;}
+
+.btn-complete{background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;}
+.btn-complete:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(90,172,68,0.4);}
+.btn-complete.done{background:linear-gradient(135deg,#a0c878,#7aaa58);}
+
+.rec-timer{
+  width:100%;
+  text-align:center;
+  font-size:13px;
+  font-weight:700;
+  color:var(--red);
+  padding:4px 0;
+  display:none;
+}
+.rec-timer.show{display:block;}
+
+/* ===== BOTTOM ACTIONS BAR ===== */
+.bottom-bar{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  background:white;
+  border-top:2px solid var(--border);
+  padding:12px 16px;
+  display:flex;
+  gap:10px;
+  z-index:50;
+  max-width:700px;
+  margin:0 auto;
+  right:0;left:0;
+}
+.btn-dl-all{
+  flex:1;
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  padding:14px;
+  font-family:'Nunito',sans-serif;
+  font-size:14px;
+  font-weight:800;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:.2s;
+}
+.btn-dl-all:hover{transform:translateY(-1px);}
+
+.btn-submit-all{
+  flex:1;
+  background:linear-gradient(135deg,var(--green),var(--green2));
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  padding:14px;
+  font-family:'Nunito',sans-serif;
+  font-size:14px;
+  font-weight:800;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:.2s;
+}
+.btn-submit-all:hover{transform:translateY(-1px);}
+
+/* ===== TOAST ===== */
+.toast{
+  position:fixed;
+  bottom:90px;
+  left:50%;transform:translateX(-50%);
+  background:var(--navy);
+  color:#fff;
+  padding:12px 24px;
+  border-radius:99px;
+  font-size:14px;
+  font-weight:700;
+  z-index:999;
+  opacity:0;
+  transition:opacity .3s;
+  pointer-events:none;
+  white-space:nowrap;
+  max-width:90vw;
+}
+.toast.show{opacity:1;}
+
+/* ===== MODAL ===== */
+.modal-overlay{
+  display:none;
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.55);
+  z-index:200;
+  align-items:center;justify-content:center;
+  padding:20px;
+}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:#fff;
+  border-radius:22px;
+  padding:32px 24px;
+  max-width:380px;
+  width:100%;
+  text-align:center;
+  animation:fadeUp .3s ease both;
+}
+.modal h2{font-family:'Baloo 2',sans-serif;font-size:22px;color:var(--navy);margin-bottom:10px;}
+.modal p{color:var(--muted);font-size:15px;line-height:1.6;margin-bottom:22px;}
+.modal-btns{display:flex;gap:12px;}
+.modal-btns button{flex:1;padding:14px;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;}
+.modal-cancel{background:#f0f5fa;color:var(--navy);}
+.modal-confirm{background:var(--green);color:#fff;}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+</style>
+</head>
+<body>
+
+<!-- ========== LOGIN SCREEN ========== -->
+<div id="loginScreen" class="screen active">
+  <div class="login-box">
+    <div class="logo-wrap">
+      <img src="1776673967784_cbdlogo.png" alt="College Buddy" onerror="this.style.display='none';document.getElementById('logoText').style.display='block'"/>
+      <div id="logoText" style="display:none;font-family:'Baloo 2',sans-serif;font-size:28px;font-weight:800;color:#fff;">College <span style="color:var(--green)">Buddy</span></div>
+      <div class="login-subtitle">🎤 Introduction Practice Platform</div>
+    </div>
+
+    <div class="field">
+      <label>Your Full Name</label>
+      <input type="text" id="inp-name" placeholder="e.g. Rahul Sharma" autocomplete="name"/>
+    </div>
+    <div class="field">
+      <label>Semester</label>
+      <select id="inp-sem">
+        <option value="">Select Semester</option>
+        <option>1st Semester</option>
+        <option>2nd Semester</option>
+        <option>3rd Semester</option>
+        <option>4th Semester</option>
+        <option>5th Semester</option>
+        <option>6th Semester</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>College Name</label>
+      <input type="text" id="inp-college" placeholder="e.g. ABC College of Technology" autocomplete="organization"/>
+    </div>
+    <div class="field">
+      <label>Mobile Number</label>
+      <input type="tel" id="inp-mobile" placeholder="10-digit mobile number" maxlength="10" inputmode="numeric"/>
+    </div>
+
+    <button class="btn-login" id="btnLogin" onclick="handleLogin()">
+      🚀 Start Practicing
+    </button>
+  </div>
+</div>
+
+<!-- ========== DASHBOARD SCREEN ========== -->
+<div id="dashScreen" class="screen">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <img src="1776673967784_cbdlogo.png" alt="College Buddy" onerror="this.style.display='none'"/>
+    <div class="nav-right">
+      <span class="nav-user" id="navUser"></span>
+      <button class="btn-logout" onclick="confirmLogout()">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar-wrap">
+    <div class="progress-info">
+      <span class="progress-label">📊 YOUR PROGRESS</span>
+      <span class="progress-count" id="progressCount">0 / 0 Done</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- Main Body -->
+  <div class="dash-body">
+
+    <!-- Nav Controls -->
+    <div class="nav-controls">
+      <button class="btn-nav" id="btnPrev" onclick="navigate(-1)">◀ Prev</button>
+      <div class="msg-counter">
+        <div class="msg-counter-id" id="msgId">1</div>
+        <div class="msg-counter-total" id="msgTotal">/ 2</div>
+      </div>
+      <button class="btn-nav" id="btnNext" onclick="navigate(1)">Next ▶</button>
+    </div>
+
+    <!-- Message Card -->
+    <div class="msg-card" id="msgCard">
+      <div class="card-header">
+        <span class="card-id-badge" id="cardIdBadge">#1</span>
+        <span class="card-title" id="cardTitle">Introduction</span>
+        <span class="card-done-badge" id="cardDoneBadge">✓ Done</span>
+      </div>
+      <div class="card-text" id="cardText">Loading...</div>
+      <div class="rec-timer" id="recTimer">🔴 Recording… 0s</div>
+      <div class="card-actions">
+        <button class="btn-action btn-read" onclick="speakText()">🔊 Listen</button>
+        <button class="btn-action btn-record" id="btnRecord" onclick="toggleRecord()">🎤 Record</button>
+        <button class="btn-action btn-dl-single" id="btnDlSingle" onclick="downloadSingle()" disabled>⬇ Download</button>
+        <button class="btn-action btn-complete" id="btnComplete" onclick="markComplete()">✅ Mark Done</button>
+      </div>
+    </div>
+
+  </div><!-- /dash-body -->
+
+  <!-- Bottom Bar -->
+  <div class="bottom-bar">
+    <button class="btn-dl-all" onclick="downloadAll()">📦 Download All Recordings</button>
+    <button class="btn-submit-all" onclick="submitProgress()">📤 Submit Progress</button>
+  </div>
+
+</div><!-- /dashScreen -->
+
+<!-- ========== MODAL ========== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitle">Confirm</h2>
+    <p id="modalMsg">Are you sure?</p>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-confirm" id="modalConfirm">Yes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TOAST ========== -->
+<div class="toast" id="toast"></div>
+
+<!-- ========== SCRIPT ========== -->
+<script>
+// ============================================================
+//  CONFIG — Replace with your deployed Google Apps Script URL
+// ============================================================
+const GAS_URL = "https://script.google.com/macros/s/AKfycbybqNJlwKyAkWuVYz7biz2NYUiQOA_LGkz2rp_Cq-h8BhdIiQgbi_BuaReVvtDZAVGG/exec";
+
+// ============================================================
+//  STATE
+// ============================================================
+let user       = null;   // { name, semester, college, mobile }
+let currentIdx = 0;      // index in INTRO_MESSAGES array
+let progress   = {};     // { completedIds: Set, lastIdx: 0 }
+let recordings = {};     // { [msgId]: Blob }
+let mediaRecorder = null;
+let recChunks  = [];
+let recTimer   = null;
+let recSeconds = 0;
+
+// ============================================================
+//  INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('cb_user');
+  if (saved) {
+    user = JSON.parse(saved);
+    loadProgress();
+    showDash();
+  }
+  loadRecordingsFromIDB();
+});
+
+// ============================================================
+//  LOGIN
+// ============================================================
+async function handleLogin() {
+  const name    = document.getElementById('inp-name').value.trim();
+  const sem     = document.getElementById('inp-sem').value;
+  const college = document.getElementById('inp-college').value.trim();
+  const mobile  = document.getElementById('inp-mobile').value.trim();
+
+  if (!name || !sem || !college || !mobile) { showToast('⚠️ Please fill all fields'); return; }
+  if (!/^\d{10}$/.test(mobile)) { showToast('⚠️ Enter a valid 10-digit mobile number'); return; }
+
+  user = { name, semester: sem, college, mobile };
+  localStorage.setItem('cb_user', JSON.stringify(user));
+
+  const btn = document.getElementById('btnLogin');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  // Send to Google Sheet (non-blocking)
+  sendToSheet({ action: 'login', ...user }).catch(() => {});
+
+  loadProgress();
+  showDash();
+  btn.disabled = false; btn.textContent = '🚀 Start Practicing';
+}
+
+// ============================================================
+//  PROGRESS (localStorage)
+// ============================================================
+function loadProgress() {
+  const key  = 'cb_progress_' + user.mobile;
+  const raw  = localStorage.getItem(key);
+  const data = raw ? JSON.parse(raw) : { completedIds: [], lastIdx: 0 };
+  progress = { completedIds: new Set(data.completedIds), lastIdx: data.lastIdx || 0 };
+  currentIdx = progress.lastIdx;
+}
+
+function saveProgress() {
+  const key = 'cb_progress_' + user.mobile;
+  localStorage.setItem(key, JSON.stringify({
+    completedIds: [...progress.completedIds],
+    lastIdx: currentIdx
+  }));
+  updateProgressBar();
+}
+
+function updateProgressBar() {
+  const total = INTRO_MESSAGES.length;
+  const done  = progress.completedIds.size;
+  document.getElementById('progressCount').textContent = `${done} / ${total} Done`;
+  document.getElementById('progressFill').style.width  = `${total ? (done/total*100) : 0}%`;
+}
+
+// ============================================================
+//  DASHBOARD
+// ============================================================
+function showDash() {
+  document.getElementById('loginScreen').classList.remove('active');
+  document.getElementById('dashScreen').classList.add('active');
+  document.getElementById('navUser').textContent = '👤 ' + user.name.split(' ')[0];
+  updateProgressBar();
+  renderCard();
+}
+
+function renderCard() {
+  if (!INTRO_MESSAGES || INTRO_MESSAGES.length === 0) {
+    document.getElementById('cardText').textContent = '⚠️ No messages loaded. Check messages.js';
+    return;
+  }
+
+  const total = INTRO_MESSAGES.length;
+  const msg   = INTRO_MESSAGES[currentIdx];
+  const isDone = progress.completedIds.has(msg.id);
+
+  // Personalise text
+  const text = msg.text
+    .replace(/\{name\}/g,     user.name)
+    .replace(/\{semester\}/g, user.semester)
+    .replace(/\{college\}/g,  user.college);
+
+  // Update DOM
+  document.getElementById('msgId').textContent       = msg.id;
+  document.getElementById('msgTotal').textContent    = '/ ' + total;
+  document.getElementById('cardIdBadge').textContent = '#' + msg.id;
+  document.getElementById('cardTitle').textContent   = msg.title || ('Introduction ' + msg.id);
+  document.getElementById('cardText').textContent    = text;
+
+  const doneBadge = document.getElementById('cardDoneBadge');
+  isDone ? doneBadge.classList.add('show') : doneBadge.classList.remove('show');
+
+  const btnComp = document.getElementById('btnComplete');
+  btnComp.textContent = isDone ? '✅ Completed' : '✅ Mark Done';
+  isDone ? btnComp.classList.add('done') : btnComp.classList.remove('done');
+
+  // Download button — enable if recording exists
+  document.getElementById('btnDlSingle').disabled = !recordings[msg.id];
+
+  // Stop any active recording when switching
+  stopRecordingIfActive();
+
+  // Nav buttons
+  document.getElementById('btnPrev').disabled = currentIdx === 0;
+  document.getElementById('btnNext').disabled = currentIdx === total - 1;
+
+  // Save last position
+  progress.lastIdx = currentIdx;
+  saveProgress();
+}
+
+function navigate(dir) {
+  const next = currentIdx + dir;
+  if (next < 0 || next >= INTRO_MESSAGES.length) return;
+  currentIdx = next;
+  renderCard();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ============================================================
+//  MARK COMPLETE
+// ============================================================
+function markComplete() {
+  const msg = INTRO_MESSAGES[currentIdx];
+  const wasNew = !progress.completedIds.has(msg.id);
+  progress.completedIds.add(msg.id);
+  saveProgress();
+
+  // Remote sync (non-blocking)
+  sendToSheet({
+    action: 'progress',
+    mobile: user.mobile,
+    name: user.name,
+    completedCount: progress.completedIds.size,
+    completedIds: [...progress.completedIds].join(',')
+  }).catch(() => {});
+
+  renderCard();
+  if (wasNew) showToast('🎉 Marked as complete!');
+}
+
+// ============================================================
+//  TEXT-TO-SPEECH
+// ============================================================
+function speakText() {
+  if (!('speechSynthesis' in window)) { showToast('❌ Browser does not support TTS'); return; }
+  window.speechSynthesis.cancel();
+  const msg   = INTRO_MESSAGES[currentIdx];
+  const text  = msg.text
+    .replace(/\{name\}/g,     user.name)
+    .replace(/\{semester\}/g, user.semester)
+    .replace(/\{college\}/g,  user.college);
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.rate = 0.88; utt.pitch = 1;
+  window.speechSynthesis.speak(utt);
+  showToast('🔊 Playing audio…');
+}
+
+// ============================================================
+//  RECORDING
+// ============================================================
+async function toggleRecord() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    stopRecording();
+  } else {
+    await startRecording();
+  }
+}
+
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    recChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => { if (e.data.size) recChunks.push(e.data); };
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(recChunks, { type: 'audio/webm' });
+      const id   = INTRO_MESSAGES[currentIdx].id;
+      recordings[id] = blob;
+      saveRecordingToIDB(id, blob);
+      document.getElementById('btnDlSingle').disabled = false;
+      showToast('✅ Recording saved!');
+      stream.getTracks().forEach(t => t.stop());
+    };
+    mediaRecorder.start();
+
+    // UI
+    const btn = document.getElementById('btnRecord');
+    btn.classList.add('recording');
+    btn.textContent = '⏹ Stop';
+    recSeconds = 0;
+    const timerEl = document.getElementById('recTimer');
+    timerEl.classList.add('show');
+    recTimer = setInterval(() => {
+      recSeconds++;
+      timerEl.textContent = `🔴 Recording… ${recSeconds}s`;
+    }, 1000);
+
+  } catch(e) {
+    showToast('❌ Mic permission denied');
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+  }
+  clearInterval(recTimer);
+  const btn = document.getElementById('btnRecord');
+  btn.classList.remove('recording');
+  btn.textContent = '🎤 Record';
+  document.getElementById('recTimer').classList.remove('show');
+}
+
+function stopRecordingIfActive() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') stopRecording();
+}
+
+// ============================================================
+//  INDEXEDDB — persist recordings across page reload
+// ============================================================
+let db = null;
+function openIDB() {
+  return new Promise((res, rej) => {
+    const req = indexedDB.open('cb_recordings', 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore('recs', { keyPath: 'id' });
+    req.onsuccess = e => res(e.target.result);
+    req.onerror   = e => rej(e);
+  });
+}
+async function saveRecordingToIDB(id, blob) {
+  if (!db) db = await openIDB();
+  const tx = db.transaction('recs', 'readwrite');
+  tx.objectStore('recs').put({ id, blob });
+}
+async function loadRecordingsFromIDB() {
+  try {
+    db = await openIDB();
+    const tx    = db.transaction('recs', 'readonly');
+    const store = tx.objectStore('recs');
+    const req   = store.getAll();
+    req.onsuccess = () => {
+      req.result.forEach(r => { recordings[r.id] = r.blob; });
+      renderCard();
+    };
+  } catch(e) {}
+}
+
+// ============================================================
+//  DOWNLOAD
+// ============================================================
+function downloadSingle() {
+  const id = INTRO_MESSAGES[currentIdx].id;
+  if (!recordings[id]) { showToast('⚠️ No recording for this message'); return; }
+  dlBlob(recordings[id], `intro_${id}_${user.name.replace(/\s+/g,'_')}.webm`);
+  showToast('⬇️ Downloading…');
+}
+
+async function downloadAll() {
+  const keys = Object.keys(recordings);
+  if (!keys.length) { showToast('⚠️ No recordings yet'); return; }
+  showToast(`⬇️ Downloading ${keys.length} file(s)…`);
+  for (const id of keys) {
+    await sleep(300);
+    dlBlob(recordings[id], `intro_${id}_${user.name.replace(/\s+/g,'_')}.webm`);
+  }
+}
+
+function dlBlob(blob, name) {
+  const url = URL.createObjectURL(blob);
+  const a   = document.createElement('a');
+  a.href = url; a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ============================================================
+//  SUBMIT PROGRESS (to Google Sheet)
+// ============================================================
+async function submitProgress() {
+  showToast('📤 Submitting…');
+  try {
+    await sendToSheet({
+      action: 'progress',
+      mobile: user.mobile,
+      name: user.name,
+      completedCount: progress.completedIds.size,
+      completedIds: [...progress.completedIds].join(',')
+    });
+    showToast('✅ Progress submitted!');
+  } catch(e) {
+    showToast('❌ Submission failed. Check API URL.');
+  }
+}
+
+// ============================================================
+//  GOOGLE SHEET API CALL
+// ============================================================
+async function sendToSheet(data) {
+  if (GAS_URL === 'YOUR_DEPLOYED_APPS_SCRIPT_URL_HERE') return;
+  const res = await fetch(GAS_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  return res;
+}
+
+// ============================================================
+//  LOGOUT
+// ============================================================
+function confirmLogout() {
+  showModal(
+    'Logout?',
+    'Your local progress will be kept. You can log in again anytime.',
+    () => {
+      stopRecordingIfActive();
+      localStorage.removeItem('cb_user');
+      closeModal();
+      document.getElementById('dashScreen').classList.remove('active');
+      document.getElementById('loginScreen').classList.add('active');
+      user = null;
+    }
+  );
+}
+
+// ============================================================
+//  MODAL
+// ============================================================
+function showModal(title, msg, onConfirm) {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalMsg').textContent   = msg;
+  document.getElementById('modalConfirm').onclick   = onConfirm;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+// ============================================================
+//  TOAST
+// ============================================================
+let toastTimer = null;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
